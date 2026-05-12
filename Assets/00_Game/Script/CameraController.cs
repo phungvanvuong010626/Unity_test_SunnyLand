@@ -1,0 +1,16 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using UnityEngine;
+
+public class CameraController : MonoBehaviour
+{
+    public Transform player; 
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(player != null)
+            transform.position = new Vector3(player.position.x, player.position.y, transform.position.z);
+    }
+}
