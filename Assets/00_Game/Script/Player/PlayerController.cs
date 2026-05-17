@@ -66,7 +66,6 @@ public class PlayerController : MonoBehaviour
 
     private void GetInput()
     {
-        // Nếu đang bị đau thì không nhận Input di chuyển hay nhảy
         if (isHurt) return;
 
         hDirection = Input.GetAxisRaw("Horizontal");
@@ -76,7 +75,6 @@ public class PlayerController : MonoBehaviour
             Jump();
         }
 
-        // Nhấp chuột trái phát âm thanh click
         if (Input.GetMouseButtonDown(0))
         {
             PlaySFX(clickSound);
@@ -94,7 +92,6 @@ public class PlayerController : MonoBehaviour
         // Nếu đang bị quái đẩy lùi (Hurt), giữ nguyên lực vật lý bounce, không can thiệp vận tốc di chuyển
         if (isHurt) return;
 
-        // Xử lý di chuyển mượt mà bám theo Update cũ của bạn
         if (hDirection < 0)
         {
             rb.velocity = new Vector2(-speed, rb.velocity.y);

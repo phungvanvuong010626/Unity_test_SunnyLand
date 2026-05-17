@@ -2370,7 +2370,7 @@ RectTransform:
   m_GameObject: {fileID: 2039513251}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1556039699}
@@ -2683,12 +2683,12 @@ MonoBehaviour:
   coll: {fileID: 1164546103582574068}
   animator: {fileID: 7202620877244324406}
   speed: 8
-  jumpforce: 10
+  jumpforce: 15
   ground:
     serializedVersion: 2
     m_Bits: 8
   groundCheck: {fileID: 5838391599820024089}
-  checkRadius: 0.09
+  checkRadius: 0.1
   startPosition: {x: 0, y: 0, z: 0}
   sfxSource: {fileID: 8038775980878310024}
   hitSound: {fileID: 8300000, guid: d3805bc0a7663e240a0ab689bc2851d1, type: 3}
@@ -2768,7 +2768,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 2
+  m_GravityScale: 4
   m_Material: {fileID: 6200000, guid: 026b94e068e79994d9f19e25a754b443, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
