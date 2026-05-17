@@ -1,168 +1,7 @@
-﻿//using UnityEngine;
-
-//public class PlayerController : MonoBehaviour
-//{
-//    [SerializeField] private Rigidbody2D rb;
-//    [SerializeField] private Collider2D coll;
-//    [SerializeField] private Animator animator;
-//    [SerializeField] private float speed = 8f;
-//    [SerializeField] private float jumpforce = 10f;
-//    [SerializeField] private LayerMask ground;
-//    [SerializeField] private Transform groundCheck;
-//    [SerializeField] private float checkRadius = 0.2f;
-//    [SerializeField] private Vector3 startPosition;
-
-//    private bool isGrounded;
-//    private bool isJumping = false;
-
-
-//    public float Speed => speed;
-//    public float SpeedValue() => speed;
-
-//    public void SpeedUp(float speed)
-//    {
-//        this.speed += speed;
-//    }
-
-//    private void Start()
-//    {
-//        Init();
-//    }
-
-//    private void Init()
-//    {
-//        startPosition = transform.position;
-//    }
-//    void Awake()
-//    {
-//        if(rb == null)
-//        {
-//            rb = GetComponent<Rigidbody2D>();
-//        }    
-//        if(coll == null)
-//        {
-//            coll = GetComponent<Collider2D>();
-//        }
-//    }
-
-//    // Update is called once per frame
-//    void Update()
-//    {
-//        CheckGrounded();
-//        GetInput();
-//        Movement();
-//        UpdateAnimParams();
-//    }
-
-//    private void CheckGrounded()
-//    {
-//        isGrounded = IsGrounded();
-//    }
-//    float hDirection;
-//    private void GetInput()
-//    {
-//        hDirection = Input.GetAxisRaw("Horizontal");
-
-//        if (Input.GetKeyDown(KeyCode.Space))
-//        {
-//            Jump();
-//        }
-//    }
-//    private void Movement()
-//    {
-//        if(rb == null)
-//        {
-//            Debug.LogError("Rigidbody is null");
-//            return;
-//        }
-//        if(hDirection < 0)
-//        {
-//            rb.velocity = new Vector2(-speed, rb.velocity.y);
-//            transform.localScale = new Vector3(-1, 1, 1);
-//            PlayAnimRun();
-//        }
-//        else if(hDirection > 0)
-//        {
-//            rb.velocity = new Vector2(speed, rb.velocity.y);
-//            transform.localScale = new Vector3(1, 1, 1);
-//            PlayAnimRun();
-//        }
-//        else
-//        {
-//            rb.velocity = new Vector2(0, rb.velocity.y);
-//            PlayAnimIdle();
-//        }
-//    }
-
-//    private void UpdateAnimParams()
-//    {
-//        if(animator == null)
-//        {
-//            Debug.LogError("");
-//            return;
-//        }
-//        animator.SetBool("IsGrounded", isGrounded);
-//        animator.SetFloat("YVelocity", rb.velocity.y); 
-//    }
-//    private bool IsGrounded() => Physics2D.OverlapCircle(groundCheck.position, checkRadius, ground);
-//    private void Jump()
-//    {
-//        if (!isGrounded) return;
-//        rb.velocity = new Vector2(rb.velocity.x, jumpforce);
-//        animator.SetTrigger("Jump");
-//    }
-//    private void PlayAnimRun()
-//    {
-//        animator.SetBool("IsRun", true);
-//    }
-//    private void OnDrawGizmos()
-//    {
-//        Gizmos.color = Color.red;
-//        Gizmos.DrawWireSphere(groundCheck.position, checkRadius);
-//    }
-
-//    private void PlayAnimIdle()
-//    {
-//        animator.SetBool("IsRun", false);
-//    }
-
-
-//    private void OnCollisionEnter2D(Collision2D collision)
-//    {
-//        if (collision.gameObject.CompareTag("Enemy"))
-//        {
-//            transform.position = startPosition;
-//        }
-//    }
-
-
-//    //Dictionary<Collider2D, EnemyControl> enemyDic = new Dictionary<Collider2D, EnemyControl>();
-//    //private void OnTriggerEnter2D(Collider2D collision)
-//    //{
-//    //    if (collision != null)
-//    //    {
-//    //        if (enemyDic.TryGetValue(collision, out var value))
-//    //        {
-//    //            //value.TakeDamage();
-//    //        }
-//    //        else
-//    //        {
-//    //            var enemy = collision.GetComponent<EnemyControl>();
-//    //            //enemy.TakeDamage();
-//    //            enemyDic[collision] = enemy;
-//    //        }
-
-//    //    }
-//    //}
-
-//}
-
-
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
     [Header("Movement Settings")]
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Collider2D coll;
@@ -172,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask ground;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float checkRadius = 0.2f;
+    [SerializeField] private Vector3 startPosition;
 
     [Header("Audio Settings")]
     [SerializeField] private AudioSource sfxSource;
@@ -180,166 +20,200 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip clickSound;
     [SerializeField] private AudioClip jumpSound;
 
-    private Health _health; //Tham chiếu đến script Health cùng đối tượng
-    private bool _isGrounded;
-    private float _hDirection;
-    private bool _isHurt = false;
-    private Vector3 _startPosition;
-
+    [SerializeField] private bool isGrounded;
+    [SerializeField] private float hDirection;
+    [SerializeField] private bool isHurt = false; // Khóa di chuyển khi bị đẩy lùi
+    [SerializeField] private Health _health;      // Tham chiếu sang script quản lý máu
 
 
     void Awake()
-    {
-        SetupComponents();
-    }
-
-    void Start()
-    {
-        InitializePosition();
-    }
-
-    void Update()
-    {
-        HandlePhysicsDetection();
-        HandleInput();
-        HandleAnimations();
-    }
-
-    void FixedUpdate()
-    {
-        HandleMovementExecution();
-    }
-
-
-    private void SetupComponents()
     {
         if (rb == null) rb = GetComponent<Rigidbody2D>();
         if (coll == null) coll = GetComponent<Collider2D>();
         if (animator == null) animator = GetComponent<Animator>();
         if (sfxSource == null) sfxSource = GetComponent<AudioSource>();
+
         _health = GetComponent<Health>();
     }
 
-    private void InitializePosition()
+    private void Start()
     {
-        _startPosition = transform.position;
+        Init();
     }
 
-
-    private void HandlePhysicsDetection()
+    private void Init()
     {
-        _isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, ground);
+        startPosition = transform.position;
     }
 
-
-    private void HandleInput()
+    void Update()
     {
-        _hDirection = Input.GetAxisRaw("Horizontal");
-
-        if (Input.GetKeyDown(KeyCode.Space)) ExecuteJump();
-        if (Input.GetMouseButtonDown(0)) PlaySFX(clickSound);
+        CheckGrounded();
+        GetInput();
+        Movement();
+        UpdateAnimParams();
     }
 
-
-    private void HandleMovementExecution()
+    private void CheckGrounded()
     {
-        if (_isHurt) return; //Nếu đang bị đẩy lùi thì không cho điều khiển di chuyển
-
-        rb.velocity = new Vector2(_hDirection * speed, rb.velocity.y);
-        ApplyFlip();
+        isGrounded = IsGrounded();
     }
 
-    //Xử lý xoay hình ảnh nhân vật
-    private void ApplyFlip()
+    private bool IsGrounded()
     {
-        if (_hDirection != 0)
+        return Physics2D.OverlapCircle(groundCheck.position, checkRadius, ground);
+    }
+
+    private void GetInput()
+    {
+        // Nếu đang bị đau thì không nhận Input di chuyển hay nhảy
+        if (isHurt) return;
+
+        hDirection = Input.GetAxisRaw("Horizontal");
+
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            transform.localScale = new Vector3(_hDirection > 0 ? 1 : -1, 1, 1);
+            Jump();
+        }
+
+        // Nhấp chuột trái phát âm thanh click
+        if (Input.GetMouseButtonDown(0))
+        {
+            PlaySFX(clickSound);
         }
     }
 
-    private void ExecuteJump()
+    private void Movement()
     {
-        if (!_isGrounded) return;
+        if (rb == null)
+        {
+            Debug.LogError("Rigidbody is null");
+            return;
+        }
+
+        // Nếu đang bị quái đẩy lùi (Hurt), giữ nguyên lực vật lý bounce, không can thiệp vận tốc di chuyển
+        if (isHurt) return;
+
+        // Xử lý di chuyển mượt mà bám theo Update cũ của bạn
+        if (hDirection < 0)
+        {
+            rb.velocity = new Vector2(-speed, rb.velocity.y);
+            transform.localScale = new Vector3(-1, 1, 1);
+            PlayAnimRun();
+        }
+        else if (hDirection > 0)
+        {
+            rb.velocity = new Vector2(speed, rb.velocity.y);
+            transform.localScale = new Vector3(1, 1, 1);
+            PlayAnimRun();
+        }
+        else
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+            PlayAnimIdle();
+        }
+    }
+
+    private void Jump()
+    {
+        if (!isGrounded) return;
 
         rb.velocity = new Vector2(rb.velocity.x, jumpforce);
         animator.SetTrigger("Jump");
-        PlaySFX(jumpSound);
+        PlaySFX(jumpSound); 
     }
 
-    //Cập nhật các tham số cho Animator
-    private void HandleAnimations()
+    private void UpdateAnimParams()
     {
         if (animator == null) return;
 
-        animator.SetBool("IsRun", _hDirection != 0);
-        animator.SetBool("IsGrounded", _isGrounded);
+        animator.SetBool("IsGrounded", isGrounded);
         animator.SetFloat("YVelocity", rb.velocity.y);
     }
 
+    private void PlayAnimRun()
+    {
+        animator.SetBool("IsRun", true);
+    }
 
+    private void PlayAnimIdle()
+    {
+        animator.SetBool("IsRun", false);
+    }
+
+    // --- TÍCH HỢP CÁC CHỨC NĂNG VA CHẠM, SÁT THƯƠNG VÀ ĐỒ VẬT ---
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // Khi đâm vào quái vật
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            HandleEnemyCollision(collision.gameObject);
+            EnemyControl enemy = collision.gameObject.GetComponent<EnemyControl>();
+            // Nếu quái chưa chết và người chơi không trong trạng thái bị thương trước đó
+            if (enemy != null && !enemy.IsDead && !isHurt)
+            {
+                if (_health != null) _health.TakeDamage(20f); // Trừ 20 máu
+                ApplyKnockback();
+                PlaySFX(hitSound);
+            }
         }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Fruit")) HandleFruitPickup(collision.gameObject);
-        if (collision.CompareTag("Enemy")) HandleEnemyStomp(collision);
-    }
-
-    private void HandleEnemyCollision(GameObject enemyObj)
-    {
-        EnemyControl enemy = enemyObj.GetComponent<EnemyControl>();
-        if (enemy != null && !enemy.IsDead && !_isHurt)
+        // Khi ăn trái cây hồi máu
+        if (collision.CompareTag("Fruit"))
         {
-            _health.TakeDamage(20f); //Gọi sang script Health để trừ máu
-            ApplyKnockback();
-            PlaySFX(hitSound);
+            if (_health != null) _health.TakeDamage(-20f); // Truyền số âm để hồi máu
+            PlaySFX(itemSound);
+            Destroy(collision.gameObject);
         }
-    }
 
-    private void HandleFruitPickup(GameObject fruit)
-    {
-        _health.TakeDamage(-20f);// Dùng TakeDamage với số âm để hồi máu hoặc viết hàm Heal trong Health
-        PlaySFX(itemSound);
-        Destroy(fruit);
-    }
-
-    private void HandleEnemyStomp(Collider2D enemyCollider)
-    {
-        if (rb.velocity.y < -0.1f && !_isHurt)
+        // Khi giẫm lên đầu quái vật (Trigger nằm ở đầu quái)
+        if (collision.CompareTag("Enemy"))
         {
-            EnemyControl enemy = enemyCollider.GetComponent<EnemyControl>();
-            if (enemy != null && !enemy.IsDead)
+            // Chỉ tính là giẫm khi nhân vật đang rơi xuống (YVelocity < -0.1f)
+            if (rb.velocity.y < -0.1f && !isHurt)
             {
-                rb.velocity = new Vector2(rb.velocity.x, jumpforce * 0.8f);
-                enemy.TakeDamage();
+                EnemyControl enemy = collision.GetComponent<EnemyControl>();
+                if (enemy != null && !enemy.IsDead)
+                {
+                    // Nảy nhẹ lên khi giẫm chết quái
+                    rb.velocity = new Vector2(rb.velocity.x, jumpforce * 0.8f);
+                    enemy.TakeDamage(); // Kích hoạt hàm chết của quái
+                }
             }
         }
     }
 
-    // --- CÁC HÀM HỖ TRỢ (HELPERS) ---
 
+    // Xử lý hiệu ứng đẩy lùi khi trúng đòn
     private void ApplyKnockback()
     {
-        _isHurt = true;
+        isHurt = true;
+        hDirection = 0; // Reset input di chuyển tạm thời
         animator.SetTrigger("Hurt");
+
+        // Đẩy lùi về hướng ngược lại hướng đang nhìn
         float knockDir = transform.localScale.x > 0 ? -1 : 1;
         rb.velocity = new Vector2(knockDir * 5f, 5f);
+
+        // Chờ 0.5 giây rồi trả lại quyền điều khiển
         Invoke(nameof(EndHurtState), 0.5f);
     }
 
-    private void EndHurtState() => _isHurt = false;
+    private void EndHurtState()
+    {
+        isHurt = false;
+    }
 
+    // Hàm phát âm thanh ngắn độc lập
     private void PlaySFX(AudioClip clip)
     {
-        if (clip != null && sfxSource != null) sfxSource.PlayOneShot(clip);
+        if (clip != null && sfxSource != null)
+        {
+            sfxSource.PlayOneShot(clip);
+        }
     }
 
     private void OnDrawGizmos()

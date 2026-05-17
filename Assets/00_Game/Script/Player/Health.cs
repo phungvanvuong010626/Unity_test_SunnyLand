@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
+using UnityEngine.Events; 
 
 public class Health : MonoBehaviour
 {
     [Header("Health Settings")]
     [SerializeField] private float maxHealth = 100f;
-    //S? ki?n báo cho UIHealth
-    public UnityEvent<float> OnHealthPercentChanged;
-    private float _currentHealth;
+    private float _currentHealth;           
+
+    [Header("Events")]
+    public UnityEvent<float> OnHealthPercentChanged = new UnityEvent<float>();
 
 
     void Awake()
@@ -18,30 +19,41 @@ public class Health : MonoBehaviour
     }
 
 
-    //Thi?t l?p máu v? m?c t?i ?a và thông báo tr?ng thái
     private void SetupInitialHealth()
     {
         _currentHealth = maxHealth;
         NotifyChange();
     }
 
+
+
     public void TakeDamage(float amount)
     {
+        //Tính toán tr? máu th?c t?
         ApplyDamageCalculation(amount);
+
+        //thông báo cho UIHealth c?p nh?t l?i thanh Slider
         NotifyChange();
     }
 
-    //Th?c hi?n phép toán tr? máu và gi?i h?n trong kho?ng [0, Max]
+
+
     private void ApplyDamageCalculation(float amount)
     {
         _currentHealth -= amount;
+        // Hàm Mathf.Clamp giúp ép _currentHealth không bao gi? b? âm d??i 0 và không bao gi? v??t quá maxHealth
         _currentHealth = Mathf.Clamp(_currentHealth, 0, maxHealth);
     }
 
-    //Tính toán t? l? % máu và "phát tín hi?u" qua Unity Event
+
     private void NotifyChange()
     {
+        // Ch?n l?i chia cho s? 0 n?u vô tình trong Inspector b?n nh?p Max Health = 0
+        if (maxHealth <= 0) return;
         float percent = _currentHealth / maxHealth;
+
+        //Invoke() s? phát tín hi?u ?i kèm theo d? li?u ph?n tr?m máu
+        // B?t k? ??i t??ng nào ??ng ký nh?n s? ki?n này ? ngoài Inspector (nh? Slider thanh máu) s? t? ??ng ch?y theo.
         OnHealthPercentChanged.Invoke(percent);
     }
 }

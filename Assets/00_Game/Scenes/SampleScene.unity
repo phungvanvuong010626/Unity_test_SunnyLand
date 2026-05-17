@@ -1702,7 +1702,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: cdec01309b5950a448ea5de5e8972462, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2400,8 +2400,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 978664624b033b84aa9f0221f1a5dcc9, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -2612,8 +2612,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.0016706586, y: -0.25}
-  m_Size: {x: 0.81776154, y: 1.5}
+  m_Offset: {x: -0.0016706586, y: -0.265}
+  m_Size: {x: 0.81776154, y: 1.47}
   m_Direction: 0
 --- !u!212 &2505632835791160215
 SpriteRenderer:
@@ -2688,12 +2688,17 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   groundCheck: {fileID: 5838391599820024089}
-  checkRadius: 0.2
+  checkRadius: 0.09
+  startPosition: {x: 0, y: 0, z: 0}
   sfxSource: {fileID: 8038775980878310024}
   hitSound: {fileID: 8300000, guid: d3805bc0a7663e240a0ab689bc2851d1, type: 3}
   itemSound: {fileID: 8300000, guid: d3805bc0a7663e240a0ab689bc2851d1, type: 3}
   clickSound: {fileID: 8300000, guid: 7ebcafde3e666884fbb3469dfaf519ba, type: 3}
   jumpSound: {fileID: 8300000, guid: 0f08a8672c7b2e342b069e2a9ee7a237, type: 3}
+  isGrounded: 0
+  hDirection: 0
+  isHurt: 0
+  _health: {fileID: 0}
 --- !u!1 &5215150010520520998
 GameObject:
   m_ObjectHideFlags: 0
@@ -2805,7 +2810,7 @@ Transform:
   m_GameObject: {fileID: 6183494011731823924}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.64, y: 2.1, z: 0}
+  m_LocalPosition: {x: -0.601, y: 2.11, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
